@@ -1,0 +1,3 @@
+language: rust
+rust: 1.65
+cache: cargo
