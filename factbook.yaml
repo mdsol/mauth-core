@@ -1,56 +1,27 @@
-# Visit https://github.com/mdsol/platform-standards/blob/main/schemas/v1alpha1.schema.md for all the details of this file format.
-
-# This YAML file starts starts with '---', which is the separator for YAML documents within the same file.
-# If the repository contains more than one component, use multiple YAML documents in this same file to document each of them.
-
-# Instructions:
-# Read the comments on each line for quick on-spot instructions or the file format above for complete overview.
-# Update all values in <>.
-# Remove all the unnecesary extra comments from the file.
----
-apiVersion: backstage.io/v1alpha1 # This is a constant, just leave as is.
-kind: Uninitialized # values: Uninitialized or Component. Use `Component` once this repository is past the initial commit.
+apiVersion: backstage.io/v1alpha1
+kind: Component
 spec:
-  type: <choose a type> # web_backend == only API, web_frontend == only UI, web_fullstack == both, mobile == mobile app, library, documentation, other
-  lifecycle: experimental # values: experimental, production or deprecated. `production` means development towards production even if not in production yet.
-  owner: <team or person email>@mdsol.com  # it does not matter if the email does not exist
-
+  type: library
+  lifecycle: production
+  owner: ae@mdsol.com
 metadata:
-  json_schema: https://github.com/mdsol/platform-standards/tree/main/schemas/v1alpha1.schema.json # This is a constant, just leave as is.
-
-  name: <Name in kebab-case>  # Name of this entity using kebab-case. Ex: plinth, rave-edc, astinus-java, etc.
-  title: <Human readable title>  # Use spaces to separate words for readibility. Ex: Rave EDC
-  description: <Description of this entity>
-#  aliases: ["", ""] # Optional: Add a list of extra names if this entity has other names
-
-# Optional: Uncomment and fill in the security section if this repository holds the codebase of a service.
-#  security:
-#    authentication: [mauth] # List all the authentication methods used in our service. See the json schema for options.
-#    network_accessiblity: [private] # `private` == internal vpn only, `public` == directly accesible outside the vpn
-#    data_types: [clinical] # List the type of data used in your service.
-
-  teams:  # If multiple teams work on this repo, please list them all
-    - name: <Team name> # optional
-      number: <Team number> # Ex: 219
-      email: <team email>@mdsol.com # optional
+  json_schema: https://github.com/mdsol/platform-standards/tree/master/schemas/v1alpha1.schema.json
+  name: mauth-core
+  title: MAuth Core
+  description: A library to generate and verify MAuth signatures
+  teams:
+    - name: Architecture Enablement
+      number: 119
+      email: ae@mdsol.com
   people:
-    # NOTE: roles beyond technical owner and product owner will not be displayed in DevOps Central
-    - role: technical owner   # REQUIRED. Technical owner is someone who can answer technical questions
-      email: <technical owner>@mdsol.com
-    - role: product owner  # Optional: product owner is someone who can answer product related questions
-      email: <product owner>@mdsol.com
-
-  channels: # List all the places where we can find you. Mainly slack channels.
-    - url: https://mdsol.slack.com/messages/<channel name>  # Use a human readable channel name.
+    - role: technical owner
+      email: ykitamura@mdsol.com
+  channels:
+    - url: https://mdsol.slack.com/messages/ae
       automated_messaging: false
       role: slack
-
   pipelines: # Where is your CI running
-    - url: https://travis-ci.com/github/mdsol/<repository>
+    - url: https://travis-ci.com/github/mdsol/mauth-core
       role: Integration
-
-  annotations:  # Anything extra, for instance links.
-    arc42: https://learn.mdsol.com/<path to arc42 docs>
-    docs: https://learn.mdsol.com/<path to other docs>
-    medistrano: https://medistrano.imedidata.net/projects/<project ID>
-    jira: https://jira.mdsol.com/secure/RapidBoard.jspa?rapidView=<board ID>
+  annotations:
+    jira: https://jira.mdsol.com/secure/RapidBoard.jspa?rapidView=3118
