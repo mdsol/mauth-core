@@ -102,9 +102,10 @@ impl<'a> Signable<'a> {
 
     fn normalize_double_dot(url: Cow<str>) -> String {
         let new_url = DOUBLE_DOT_REGEX.replace(&url, "/");
-        match new_url == url {
-            true => new_url.to_string(),
-            false => Self::normalize_double_dot(new_url),
+        if new_url == url {
+            new_url.to_string()
+        } else {
+            Self::normalize_double_dot(new_url)
         }
     }
 

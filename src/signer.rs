@@ -1,5 +1,5 @@
 use crate::signable::Signable;
-use anyhow::Result;
+use anyhow::{bail, Result};
 use openssl::hash::MessageDigest;
 use openssl::pkey::{PKey, Private};
 use openssl::rsa::{Padding, Rsa};
@@ -36,7 +36,7 @@ impl Signer {
         match version {
             1 => self.sign_string_v1(&signable),
             2 => self.sign_string_v2(&signable),
-            _ => Ok(String::from("")),
+            _ => bail!("Version {version} is not supported."),
         }
     }
 

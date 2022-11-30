@@ -1,5 +1,5 @@
 use crate::signable::Signable;
-use anyhow::Result;
+use anyhow::{bail, Result};
 use openssl::hash::MessageDigest;
 use openssl::pkey::{PKey, Public};
 use openssl::rsa::Padding;
@@ -34,7 +34,7 @@ impl Verifier {
         match version {
             1 => self.verify_signature_v1(&signable, signature.into()),
             2 => self.verify_signature_v2(&signable, signature.into()),
-            _ => Ok(false),
+            _ => bail!("Version {version} is not supported."),
         }
     }
 
