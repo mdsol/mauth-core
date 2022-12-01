@@ -53,7 +53,8 @@ impl Signer {
 
     fn sign_string_v2(&self, signable: &Signable) -> Result<String> {
         let mut signer = openssl::sign::Signer::new(MessageDigest::sha512(), &self.private_key)?;
-        let signature = signer.sign_oneshot_to_vec(&signable.signing_string_v2()?)?;
+        signer.update(&signable.signing_string_v2()?)?;
+        let signature = signer.sign_to_vec()?;
         Ok(base64::encode(&signature))
     }
 }
