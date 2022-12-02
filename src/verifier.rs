@@ -10,11 +10,11 @@ pub struct Verifier {
 }
 
 impl Verifier {
-    pub fn new(app_uuid: String, public_key_data: String) -> Result<Self> {
+    pub fn new(app_uuid: impl Into<String>, public_key_data: String) -> Result<Self> {
         let public_key = PKey::public_key_from_pem(public_key_data.as_bytes())?;
 
         Ok(Self {
-            app_uuid,
+            app_uuid: app_uuid.into(),
             public_key,
         })
     }

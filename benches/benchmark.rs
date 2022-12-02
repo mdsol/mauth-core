@@ -10,7 +10,7 @@ const QS: &str = "don=quixote&quixote=don";
 fn bench_signer(c: &mut Criterion) {
     let rsa = Rsa::generate(2048).unwrap();
     let private_key = String::from_utf8(rsa.private_key_to_pem().unwrap()).unwrap();
-    let signer = Signer::new(APP_UUID.to_string(), private_key).unwrap();
+    let signer = Signer::new(APP_UUID, private_key).unwrap();
 
     let short_body = "Somewhere in La Mancha, in a place I do not care to remember".as_bytes();
     let average_body: &[u8] = &short_body.repeat(1000);
@@ -53,8 +53,8 @@ fn bench_verifier(c: &mut Criterion) {
     let rsa = Rsa::generate(2048).unwrap();
     let private_key = String::from_utf8(rsa.private_key_to_pem().unwrap()).unwrap();
     let public_key = String::from_utf8(rsa.public_key_to_pem().unwrap()).unwrap();
-    let signer = Signer::new(APP_UUID.to_string(), private_key).unwrap();
-    let verifier = Verifier::new(APP_UUID.to_string(), public_key).unwrap();
+    let signer = Signer::new(APP_UUID, private_key).unwrap();
+    let verifier = Verifier::new(APP_UUID, public_key).unwrap();
 
     let short_body = "Somewhere in La Mancha, in a place I do not care to remember".as_bytes();
     let average_body: &[u8] = &short_body.repeat(1000);
