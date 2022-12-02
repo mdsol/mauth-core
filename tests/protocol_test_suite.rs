@@ -99,34 +99,34 @@ fn test_verifier(
     }
 }
 
-// #[test]
-// fn mws_protocol_signer_test() -> Result<(), String> {
-//     let test_suite_path = Path::new(TEST_SUITE_PATH);
-//     let protocols_path = test_suite_path.join("protocols");
-//     let protocol_path = protocols_path.join("MWS");
+#[test]
+fn mws_protocol_signer_test() -> Result<(), String> {
+    let test_suite_path = Path::new(TEST_SUITE_PATH);
+    let protocols_path = test_suite_path.join("protocols");
+    let protocol_path = protocols_path.join("MWS");
 
-//     let config_path = test_suite_path.join("signing-config.json");
-//     let config: Config = serde_json::from_slice(&fs::read(config_path).unwrap()).unwrap();
-//     let private_key =
-//         fs::read_to_string(Path::new(&test_suite_path.join(config.private_key_file))).unwrap();
-//     let singer = Signer::new(config.app_uuid, private_key).unwrap();
-//     let timestamp = config.request_time.to_string();
+    let config_path = test_suite_path.join("signing-config.json");
+    let config: Config = serde_json::from_slice(&fs::read(config_path).unwrap()).unwrap();
+    let private_key =
+        fs::read_to_string(Path::new(&test_suite_path.join(config.private_key_file))).unwrap();
+    let singer = Signer::new(config.app_uuid, private_key).unwrap();
+    let timestamp = config.request_time.to_string();
 
-//     fs::read_dir(&protocol_path)
-//         .unwrap()
-//         .map(|r| {
-//             let r_path = r.unwrap().path();
-//             (
-//                 r_path.clone(),
-//                 r_path.file_name().unwrap().to_str().unwrap().to_string(),
-//             )
-//         })
-//         .try_for_each(|(_, name)| {
-//             test_singer(&singer, 1, &timestamp, protocol_path.as_path(), &name)
-//         })?;
+    fs::read_dir(&protocol_path)
+        .unwrap()
+        .map(|r| {
+            let r_path = r.unwrap().path();
+            (
+                r_path.clone(),
+                r_path.file_name().unwrap().to_str().unwrap().to_string(),
+            )
+        })
+        .try_for_each(|(_, name)| {
+            test_singer(&singer, 1, &timestamp, protocol_path.as_path(), &name)
+        })?;
 
-//     Ok(())
-// }
+    Ok(())
+}
 
 #[test]
 fn mwsv2_protocol_signer_test() -> Result<(), String> {
@@ -157,36 +157,36 @@ fn mwsv2_protocol_signer_test() -> Result<(), String> {
     Ok(())
 }
 
-// #[test]
-// fn mws_protocol_verifier_test() -> Result<(), String> {
-//     let test_suite_path = Path::new(TEST_SUITE_PATH);
-//     let protocols_path = test_suite_path.join("protocols");
-//     let protocol_path = protocols_path.join("MWS");
+#[test]
+fn mws_protocol_verifier_test() -> Result<(), String> {
+    let test_suite_path = Path::new(TEST_SUITE_PATH);
+    let protocols_path = test_suite_path.join("protocols");
+    let protocol_path = protocols_path.join("MWS");
 
-//     let config_path = test_suite_path.join("signing-config.json");
-//     let config: Config = serde_json::from_slice(&fs::read(config_path).unwrap()).unwrap();
-//     let public_key = fs::read_to_string(Path::new(
-//         &test_suite_path.join("signing-params/rsa-key-pub"),
-//     ))
-//     .unwrap();
-//     let verifier = Verifier::new(config.app_uuid, public_key).unwrap();
-//     let timestamp = config.request_time.to_string();
+    let config_path = test_suite_path.join("signing-config.json");
+    let config: Config = serde_json::from_slice(&fs::read(config_path).unwrap()).unwrap();
+    let public_key = fs::read_to_string(Path::new(
+        &test_suite_path.join("signing-params/rsa-key-pub"),
+    ))
+    .unwrap();
+    let verifier = Verifier::new(config.app_uuid, public_key).unwrap();
+    let timestamp = config.request_time.to_string();
 
-//     fs::read_dir(&protocol_path)
-//         .unwrap()
-//         .map(|r| {
-//             let r_path = r.unwrap().path();
-//             (
-//                 r_path.clone(),
-//                 r_path.file_name().unwrap().to_str().unwrap().to_string(),
-//             )
-//         })
-//         .try_for_each(|(_, name)| {
-//             test_verifier(&verifier, 1, &timestamp, protocol_path.as_path(), &name)
-//         })?;
+    fs::read_dir(&protocol_path)
+        .unwrap()
+        .map(|r| {
+            let r_path = r.unwrap().path();
+            (
+                r_path.clone(),
+                r_path.file_name().unwrap().to_str().unwrap().to_string(),
+            )
+        })
+        .try_for_each(|(_, name)| {
+            test_verifier(&verifier, 1, &timestamp, protocol_path.as_path(), &name)
+        })?;
 
-//     Ok(())
-// }
+    Ok(())
+}
 
 #[test]
 fn mwsv2_protocol_verifier_test() -> Result<(), String> {
