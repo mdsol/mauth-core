@@ -7,7 +7,7 @@ use urlencoding::{decode, encode};
 
 pub static SQUEEZE_REGEX: Lazy<Regex> = lazy_regex!(r"//+");
 pub static PERCENT_CASE_REGEX: Lazy<Regex> = lazy_regex!(r"%[a-f0-9]{2}");
-pub static SINGLE_DOT_REGEX: Lazy<Regex> = lazy_regex!(r"/(\./)+");
+pub static SINGLE_DOT_REGEX: Lazy<Regex> = lazy_regex!(r"/(\./|\.\z)+");
 pub static DOUBLE_DOT_REGEX: Lazy<Regex> = lazy_regex!(r"(/[^/]+|\A)/\.\./?");
 
 pub(crate) struct Signable<'a> {
@@ -45,7 +45,7 @@ impl<'a> Signable<'a> {
         hasher.update("\n");
         hasher.update(&self.path);
         hasher.update("\n");
-        hasher.update(&self.body);
+        hasher.update(self.body);
         hasher.update("\n");
         hasher.update(&self.app_uuid);
         hasher.update("\n");
@@ -119,5 +119,49 @@ impl<'a> Signable<'a> {
 
     fn replace_plus_and_decode(value: &str) -> Result<String> {
         Ok(decode(&value.replace('+', " "))?.into_owned())
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use rstest::rstest;
+
+    #[rstest(
+        query,
+        expected,
+        case(
+            "key=-_.~!@#$%^*(){}|:\"'`<>?",
+            "key=-_.~%21%40%23%24%25%5E%2A%28%29%7B%7D%7C%3A%22%27%60%3C%3E%3F"
+        ),
+        case("∞=v&キ=v&0=v&a=v", "0=v&a=v&%E2%88%9E=v&%E3%82%AD=v"),
+        case("a=b&a=c&a=a", "a=a&a=b&a=c"),
+        case("key2=value2&key=value", "key=value&key2=value2"),
+        case("k=&k=v", "k=&k=v"),
+        case("", ""),
+        case(
+            "key=-_.%21%40%23%24%25%5E%2A%28%29%20%7B%7D%7C%3A%22%27%60%3C%3E%3F",
+            "key=-_.%21%40%23%24%25%5E%2A%28%29%20%7B%7D%7C%3A%22%27%60%3C%3E%3F"
+        ),
+        case("k=%7E", "k=~"),
+        case("k=+", "k=%20"),
+        case("k=%7E&k=~&k=%40&k=a", "k=%40&k=a&k=~&k=~")
+    )]
+    fn encode_query_test(query: &str, expected: &str) {
+        assert_eq!(Signable::encode_query(query).unwrap(), expected);
+    }
+
+    #[rstest(
+        url,
+        expected,
+        case("/./example/./.", "/example/"),
+        case("/example/sample/..", "/example/"),
+        case("/example/sample/../../../..", "/"),
+        case("/%2b", "/%2B"),
+        case("//example///sample", "/example/sample"),
+        case("/example/", "/example/")
+    )]
+    fn normalize_url_test(url: &str, expected: &str) {
+        assert_eq!(Signable::normalize_url(url), expected);
     }
 }
