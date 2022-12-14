@@ -1,0 +1,8 @@
+language: rust
+rust: 1.65
+cache: cargo
+
+script:
+  - cargo build --verbose
+  - cargo test --verbose
+  - cargo bench
