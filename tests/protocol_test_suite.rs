@@ -23,8 +23,8 @@ struct Config {
     private_key_file: String,
 }
 
-fn test_singer(
-    singer: &Signer,
+fn test_signer(
+    signer: &Signer,
     version: u8,
     timestamp: &str,
     protocol_path: &Path,
@@ -50,7 +50,7 @@ fn test_singer(
         _ => vec![],
     };
 
-    let result = singer
+    let result = signer
         .sign_string(version, req.verb, path, query, &body_data, timestamp)
         .unwrap();
 
@@ -109,7 +109,7 @@ fn mws_protocol_signer_test() -> Result<(), String> {
     let config: Config = serde_json::from_slice(&fs::read(config_path).unwrap()).unwrap();
     let private_key =
         fs::read_to_string(Path::new(&test_suite_path.join(config.private_key_file))).unwrap();
-    let singer = Signer::new(config.app_uuid, private_key).unwrap();
+    let signer = Signer::new(config.app_uuid, private_key).unwrap();
     let timestamp = config.request_time.to_string();
 
     fs::read_dir(&protocol_path)
@@ -122,7 +122,7 @@ fn mws_protocol_signer_test() -> Result<(), String> {
             )
         })
         .try_for_each(|(_, name)| {
-            test_singer(&singer, 1, &timestamp, protocol_path.as_path(), &name)
+            test_signer(&signer, 1, &timestamp, protocol_path.as_path(), &name)
         })?;
 
     Ok(())
@@ -138,7 +138,7 @@ fn mwsv2_protocol_signer_test() -> Result<(), String> {
     let config: Config = serde_json::from_slice(&fs::read(config_path).unwrap()).unwrap();
     let private_key =
         fs::read_to_string(Path::new(&test_suite_path.join(config.private_key_file))).unwrap();
-    let singer = Signer::new(config.app_uuid, private_key).unwrap();
+    let signer = Signer::new(config.app_uuid, private_key).unwrap();
     let timestamp = config.request_time.to_string();
 
     fs::read_dir(&protocol_path)
@@ -151,7 +151,7 @@ fn mwsv2_protocol_signer_test() -> Result<(), String> {
             )
         })
         .try_for_each(|(_, name)| {
-            test_singer(&singer, 2, &timestamp, protocol_path.as_path(), &name)
+            test_signer(&signer, 2, &timestamp, protocol_path.as_path(), &name)
         })?;
 
     Ok(())
