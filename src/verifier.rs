@@ -1,21 +1,26 @@
 use crate::signable::Signable;
 use anyhow::{bail, Result};
-use openssl::hash::MessageDigest;
-use openssl::pkey::{PKey, Public};
-use openssl::rsa::Padding;
+use rsa::pkcs1v15::Signature;
+use rsa::pkcs8::DecodePublicKey;
+use rsa::{PublicKey, RsaPublicKey};
+use sha2::Sha512;
 
 pub struct Verifier {
     app_uuid: String,
-    public_key: PKey<Public>,
+    public_key: RsaPublicKey,
+    verifying_key: rsa::pkcs1v15::VerifyingKey<Sha512>,
 }
 
 impl Verifier {
     pub fn new(app_uuid: impl Into<String>, public_key_data: String) -> Result<Self> {
-        let public_key = PKey::public_key_from_pem(public_key_data.as_bytes())?;
+        let public_key = RsaPublicKey::from_public_key_pem(&public_key_data)?;
+        let verifying_key =
+            rsa::pkcs1v15::VerifyingKey::<Sha512>::new_with_prefix(public_key.to_owned());
 
         Ok(Self {
             app_uuid: app_uuid.into(),
             public_key,
+            verifying_key,
         })
     }
 
@@ -39,18 +44,22 @@ impl Verifier {
     }
 
     fn verify_signature_v1(&self, signable: &Signable, signature: String) -> Result<bool> {
-        let rsa_public_key = self.public_key.rsa()?;
-        let mut buf: Vec<u8> = vec![0; rsa_public_key.size() as usize];
-        let len =
-            rsa_public_key.public_decrypt(&base64::decode(signature)?, &mut buf, Padding::PKCS1)?;
+        self.public_key.verify(
+            rsa::PaddingScheme::new_pkcs1v15_sign_raw(),
+            &signable.signing_string_v1()?,
+            &base64::decode(signature)?,
+        )?;
 
-        Ok(buf[0..len] == signable.signing_string_v1()?)
+        Ok(true)
     }
 
     fn verify_signature_v2(&self, signable: &Signable, signature: String) -> Result<bool> {
-        let mut verifier = openssl::sign::Verifier::new(MessageDigest::sha512(), &self.public_key)?;
-        verifier.set_rsa_padding(Padding::PKCS1)?;
-        verifier.update(&signable.signing_string_v2()?)?;
-        Ok(verifier.verify(&base64::decode(signature)?)?)
+        use rsa::signature::Verifier;
+
+        let signature = Signature::try_from(base64::decode(signature)?)?;
+        self.verifying_key
+            .verify(&signable.signing_string_v2()?, &signature)?;
+
+        Ok(true)
     }
 }
