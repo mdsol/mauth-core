@@ -1,24 +1,25 @@
 use crate::signable::Signable;
 use anyhow::{bail, Result};
-use openssl::hash::MessageDigest;
-use openssl::pkey::{PKey, Private};
-use openssl::rsa::{Padding, Rsa};
+use rsa::pkcs1::DecodeRsaPrivateKey;
+use rsa::RsaPrivateKey;
+use sha2::Sha512;
 
 pub struct Signer {
     app_uuid: String,
-    private_key: PKey<Private>,
-    rsa_private_key: Rsa<Private>,
+    private_key: RsaPrivateKey,
+    signing_key: rsa::pkcs1v15::SigningKey<Sha512>,
 }
 
 impl Signer {
     pub fn new(app_uuid: impl Into<String>, private_key_data: String) -> Result<Self> {
-        let private_key = PKey::private_key_from_pem(private_key_data.as_bytes())?;
-        let rsa_private_key = private_key.rsa()?;
+        let private_key = RsaPrivateKey::from_pkcs1_pem(&private_key_data)?;
+        let signing_key =
+            rsa::pkcs1v15::SigningKey::<Sha512>::new_with_prefix(private_key.to_owned());
 
         Ok(Self {
             app_uuid: app_uuid.into(),
             private_key,
-            rsa_private_key,
+            signing_key,
         })
     }
 
@@ -41,20 +42,17 @@ impl Signer {
     }
 
     fn sign_string_v1(&self, signable: &Signable) -> Result<String> {
-        let mut signature = vec![0; self.rsa_private_key.size() as usize];
-
-        self.rsa_private_key.private_encrypt(
+        let signature = self.private_key.sign(
+            rsa::PaddingScheme::new_pkcs1v15_sign_raw(),
             &signable.signing_string_v1()?,
-            &mut signature,
-            Padding::PKCS1,
         )?;
-        Ok(base64::encode(&signature))
+        Ok(base64::encode(signature))
     }
 
     fn sign_string_v2(&self, signable: &Signable) -> Result<String> {
-        let mut signer = openssl::sign::Signer::new(MessageDigest::sha512(), &self.private_key)?;
-        signer.update(&signable.signing_string_v2()?)?;
-        let signature = signer.sign_to_vec()?;
-        Ok(base64::encode(&signature))
+        use rsa::signature::Signer;
+
+        let sign = self.signing_key.sign(&signable.signing_string_v2()?);
+        Ok(base64::encode(sign.as_ref()))
     }
 }

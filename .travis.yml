@@ -1,5 +1,5 @@
 language: rust
-rust: 1.65
+rust: 1.66
 cache: cargo
 
 script:

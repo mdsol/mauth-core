@@ -1,15 +1,14 @@
 use criterion::{criterion_group, criterion_main, Criterion};
 use mauth_core::signer::Signer;
 use mauth_core::verifier::Verifier;
-use openssl::rsa::Rsa;
 
 const APP_UUID: &str = "8ac278af-e761-479b-9e7a-10bcc2f30304";
 const TIMESTAMP: &str = "1669858655";
 const QS: &str = "don=quixote&quixote=don";
 
 fn bench_signer(c: &mut Criterion) {
-    let rsa = Rsa::generate(2048).unwrap();
-    let private_key = String::from_utf8(rsa.private_key_to_pem().unwrap()).unwrap();
+    let private_key =
+        std::fs::read_to_string("tests/mauth-protocol-test-suite/signing-params/rsa-key").unwrap();
     let signer = Signer::new(APP_UUID, private_key).unwrap();
 
     let short_body = "Somewhere in La Mancha, in a place I do not care to remember".as_bytes();
@@ -50,9 +49,11 @@ fn bench_signer(c: &mut Criterion) {
 }
 
 fn bench_verifier(c: &mut Criterion) {
-    let rsa = Rsa::generate(2048).unwrap();
-    let private_key = String::from_utf8(rsa.private_key_to_pem().unwrap()).unwrap();
-    let public_key = String::from_utf8(rsa.public_key_to_pem().unwrap()).unwrap();
+    let private_key =
+        std::fs::read_to_string("tests/mauth-protocol-test-suite/signing-params/rsa-key").unwrap();
+    let public_key =
+        std::fs::read_to_string("tests/mauth-protocol-test-suite/signing-params/rsa-key-pub")
+            .unwrap();
     let signer = Signer::new(APP_UUID, private_key).unwrap();
     let verifier = Verifier::new(APP_UUID, public_key).unwrap();
 
