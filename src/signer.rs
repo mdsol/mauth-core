@@ -1,5 +1,6 @@
 use crate::signable::Signable;
 use anyhow::{bail, Result};
+use base64::{engine::general_purpose, Engine as _};
 use rsa::pkcs1::DecodeRsaPrivateKey;
 use rsa::RsaPrivateKey;
 use sha2::Sha512;
@@ -13,8 +14,7 @@ pub struct Signer {
 impl Signer {
     pub fn new(app_uuid: impl Into<String>, private_key_data: String) -> Result<Self> {
         let private_key = RsaPrivateKey::from_pkcs1_pem(&private_key_data)?;
-        let signing_key =
-            rsa::pkcs1v15::SigningKey::<Sha512>::new_with_prefix(private_key.to_owned());
+        let signing_key = rsa::pkcs1v15::SigningKey::<Sha512>::new(private_key.to_owned());
 
         Ok(Self {
             app_uuid: app_uuid.into(),
@@ -43,16 +43,16 @@ impl Signer {
 
     fn sign_string_v1(&self, signable: &Signable) -> Result<String> {
         let signature = self.private_key.sign(
-            rsa::PaddingScheme::new_pkcs1v15_sign_raw(),
+            rsa::Pkcs1v15Sign::new_unprefixed(),
             &signable.signing_string_v1()?,
         )?;
-        Ok(base64::encode(signature))
+        Ok(general_purpose::STANDARD.encode(signature))
     }
 
     fn sign_string_v2(&self, signable: &Signable) -> Result<String> {
-        use rsa::signature::Signer;
+        use rsa::signature::{SignatureEncoding, Signer};
 
         let sign = self.signing_key.sign(&signable.signing_string_v2()?);
-        Ok(base64::encode(sign.as_ref()))
+        Ok(general_purpose::STANDARD.encode(sign.to_bytes().as_ref()))
     }
 }
