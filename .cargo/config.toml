@@ -2,7 +2,4 @@
 default = "artifactory"
 
 [registries.artifactory]
-index = "https://mdsol.jfrog.io/artifactory/git/PlatformLibraries-cargo-prod-local.git"
-
-[net]
-git-fetch-with-cli = true
+index = "sparse+https://mdsol.jfrog.io/artifactory/api/cargo/PlatformLibraries-cargo-prod-local/index/"
