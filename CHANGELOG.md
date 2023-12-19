@@ -1,3 +1,6 @@
+# 0.4.0
+- Update lazy-regex to version 3.
+
 # 0.3.0
 - Update RSA to version 0.9.
 

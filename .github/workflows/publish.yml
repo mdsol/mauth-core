@@ -1,0 +1,29 @@
+name: Publish to Artifactory
+
+on:
+  push:
+    tags:
+      - "*.*.*"
+
+env:
+  CARGO_TERM_COLOR: always
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    name: Build + Publish
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Setup Rust toolchain
+      uses: dtolnay/rust-toolchain@stable
+
+    - name: Publish to Artifactory
+      run: |
+        cargo publish --registry artifactory --allow-dirty --token "Bearer $PLATFORM_LIBRARIES_ARTIFACTORY_TOKEN"
+      env:
+        PLATFORM_LIBRARIES_ARTIFACTORY_TOKEN: "${{secrets.PLATFORM_LIBRARIES_ARTIFACTORY_TOKEN}}"
