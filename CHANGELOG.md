@@ -1,3 +1,6 @@
+# 0.4.1
+- Add the Debug and Clone traits to `Signer` and `Verifier`.
+
 # 0.4.0
 - Update lazy-regex to version 3.
 
