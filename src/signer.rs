@@ -5,6 +5,7 @@ use rsa::pkcs1::DecodeRsaPrivateKey;
 use rsa::RsaPrivateKey;
 use sha2::Sha512;
 
+#[derive(Debug, Clone)]
 pub struct Signer {
     app_uuid: String,
     private_key: RsaPrivateKey,

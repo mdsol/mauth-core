@@ -6,6 +6,7 @@ use rsa::pkcs8::DecodePublicKey;
 use rsa::RsaPublicKey;
 use sha2::Sha512;
 
+#[derive(Debug, Clone)]
 pub struct Verifier {
     app_uuid: String,
     public_key: RsaPublicKey,
