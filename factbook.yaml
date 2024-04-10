@@ -5,7 +5,7 @@ spec:
   lifecycle: production
   owner: ae@mdsol.com
 metadata:
-  json_schema: https://github.com/mdsol/platform-standards/tree/master/schemas/v1alpha1.schema.json
+  json_schema: https://github.com/mdsol/platform-standards/tree/main/schemas/v1alpha1.schema.json
   name: mauth-core
   title: MAuth Core
   description: A library to generate and verify MAuth signatures
@@ -20,8 +20,5 @@ metadata:
     - url: https://mdsol.slack.com/messages/ae
       automated_messaging: false
       role: slack
-  pipelines: # Where is your CI running
-    - url: https://travis-ci.com/github/mdsol/mauth-core
-      role: Integration
   annotations:
     jira: https://jira.mdsol.com/secure/RapidBoard.jspa?rapidView=3118
