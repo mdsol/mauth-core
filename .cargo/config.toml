@@ -1,5 +1,0 @@
-[registry]
-default = "artifactory"
-
-[registries.artifactory]
-index = "sparse+https://mdsol.jfrog.io/artifactory/api/cargo/PlatformLibraries-cargo-prod-local/index/"

@@ -2,6 +2,9 @@
 name = "mauth-core"
 version = "0.4.1"
 edition = "2021"
+authors = ["Medidata Solutions <support@mdsol.com>"]
+license = "MIT"
+repository = "https://github.com/mdsol/mauth-core"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
