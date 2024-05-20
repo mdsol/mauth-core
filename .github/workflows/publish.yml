@@ -1,4 +1,4 @@
-name: Publish to Artifactory
+name: Publish
 
 on:
   push:
@@ -22,8 +22,6 @@ jobs:
     - name: Setup Rust toolchain
       uses: dtolnay/rust-toolchain@stable
 
-    - name: Publish to Artifactory
-      run: |
-        cargo publish --registry artifactory --allow-dirty --token "Bearer $PLATFORM_LIBRARIES_ARTIFACTORY_TOKEN"
+    - run: cargo publish
       env:
-        PLATFORM_LIBRARIES_ARTIFACTORY_TOKEN: "${{secrets.PLATFORM_LIBRARIES_ARTIFACTORY_TOKEN}}"
+        CARGO_REGISTRY_TOKEN: ${{ secrets.CARGO_REGISTRY_TOKEN }}

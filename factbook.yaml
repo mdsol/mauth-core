@@ -12,13 +12,6 @@ metadata:
   teams:
     - name: Architecture Enablement
       number: 119
-      email: ae@mdsol.com
   people:
     - role: technical owner
       email: ykitamura@mdsol.com
-  channels:
-    - url: https://mdsol.slack.com/messages/ae
-      automated_messaging: false
-      role: slack
-  annotations:
-    jira: https://jira.mdsol.com/secure/RapidBoard.jspa?rapidView=3118

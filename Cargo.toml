@@ -2,8 +2,14 @@
 name = "mauth-core"
 version = "0.4.1"
 edition = "2021"
-
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+authors = ["Medidata Solutions <support@mdsol.com>"]
+description = "Generate and verify Medidata MAuth protocol signatures"
+readme = "README.md"
+license = "MIT"
+homepage = "https://github.com/mdsol/mauth-core"
+repository = "https://github.com/mdsol/mauth-core"
+keywords = ["security", "authentication"]
+categories = ["authentication"]
 
 [dependencies]
 anyhow = "1"
