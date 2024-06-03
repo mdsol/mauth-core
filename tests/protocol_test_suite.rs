@@ -88,15 +88,9 @@ fn test_verifier(
         _ => vec![],
     };
 
-    let result = verifier
+    verifier
         .verify_signature(version, req.verb, path, query, &body_data, timestamp, sig)
-        .unwrap();
-
-    if result {
-        Ok(())
-    } else {
-        Err(format!("[{test_case}] failed"))
-    }
+        .map_err(|_| format!("[{test_case}] failed"))
 }
 
 #[test]

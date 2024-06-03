@@ -1,5 +1,4 @@
-use crate::signable::Signable;
-use anyhow::{bail, Result};
+use crate::{mauth_error::MAuthError, signable::Signable};
 use base64::{engine::general_purpose, Engine as _};
 use rsa::pkcs1v15::Signature;
 use rsa::pkcs8::DecodePublicKey;
@@ -14,7 +13,7 @@ pub struct Verifier {
 }
 
 impl Verifier {
-    pub fn new(app_uuid: impl Into<String>, public_key_data: String) -> Result<Self> {
+    pub fn new(app_uuid: impl Into<String>, public_key_data: String) -> Result<Self, MAuthError> {
         let public_key = RsaPublicKey::from_public_key_pem(&public_key_data)?;
         let verifying_key = rsa::pkcs1v15::VerifyingKey::<Sha512>::new(public_key.to_owned());
 
@@ -34,27 +33,35 @@ impl Verifier {
         body: &[u8],
         timestamp: impl Into<String>,
         signature: impl Into<String>,
-    ) -> Result<bool> {
+    ) -> Result<(), MAuthError> {
         let signable = Signable::new(verb, path, query, body, timestamp, &self.app_uuid);
 
         match version {
             1 => self.verify_signature_v1(&signable, signature.into()),
             2 => self.verify_signature_v2(&signable, signature.into()),
-            _ => bail!("Version {version} is not supported."),
+            v => Err(MAuthError::UnsupportedVersion(v)),
         }
     }
 
-    fn verify_signature_v1(&self, signable: &Signable, signature: String) -> Result<bool> {
+    fn verify_signature_v1(
+        &self,
+        signable: &Signable,
+        signature: String,
+    ) -> Result<(), MAuthError> {
         self.public_key.verify(
             rsa::Pkcs1v15Sign::new_unprefixed(),
             &signable.signing_string_v1()?,
             &general_purpose::STANDARD.decode(signature)?,
         )?;
 
-        Ok(true)
+        Ok(())
     }
 
-    fn verify_signature_v2(&self, signable: &Signable, signature: String) -> Result<bool> {
+    fn verify_signature_v2(
+        &self,
+        signable: &Signable,
+        signature: String,
+    ) -> Result<(), MAuthError> {
         use rsa::signature::Verifier;
 
         let signature =
@@ -62,6 +69,6 @@ impl Verifier {
         self.verifying_key
             .verify(&signable.signing_string_v2()?, &signature)?;
 
-        Ok(true)
+        Ok(())
     }
 }
