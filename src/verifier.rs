@@ -1,4 +1,4 @@
-use crate::{mauth_error::MAuthError, signable::Signable};
+use crate::{error::Error, signable::Signable};
 use base64::{engine::general_purpose, Engine as _};
 use rsa::pkcs1v15::Signature;
 use rsa::pkcs8::DecodePublicKey;
@@ -13,7 +13,7 @@ pub struct Verifier {
 }
 
 impl Verifier {
-    pub fn new(app_uuid: impl Into<String>, public_key_data: String) -> Result<Self, MAuthError> {
+    pub fn new(app_uuid: impl Into<String>, public_key_data: String) -> Result<Self, Error> {
         let public_key = RsaPublicKey::from_public_key_pem(&public_key_data)?;
         let verifying_key = rsa::pkcs1v15::VerifyingKey::<Sha512>::new(public_key.to_owned());
 
@@ -33,13 +33,13 @@ impl Verifier {
         body: &[u8],
         timestamp: impl Into<String>,
         signature: impl Into<String>,
-    ) -> Result<(), MAuthError> {
+    ) -> Result<(), Error> {
         let signable = Signable::new(verb, path, query, body, timestamp, &self.app_uuid);
 
         match version {
             1 => self.verify_signature_v1(&signable, signature.into()),
             2 => self.verify_signature_v2(&signable, signature.into()),
-            v => Err(MAuthError::UnsupportedVersion(v)),
+            v => Err(Error::UnsupportedVersion(v)),
         }
     }
 
@@ -47,7 +47,7 @@ impl Verifier {
         &self,
         signable: &Signable,
         signature: String,
-    ) -> Result<(), MAuthError> {
+    ) -> Result<(), Error> {
         self.public_key.verify(
             rsa::Pkcs1v15Sign::new_unprefixed(),
             &signable.signing_string_v1()?,
@@ -61,7 +61,7 @@ impl Verifier {
         &self,
         signable: &Signable,
         signature: String,
-    ) -> Result<(), MAuthError> {
+    ) -> Result<(), Error> {
         use rsa::signature::Verifier;
 
         let signature =
