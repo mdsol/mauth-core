@@ -1,4 +1,4 @@
-use anyhow::Result;
+use crate::error::Error;
 use lazy_regex::*;
 use regex::{Captures, Regex};
 use sha2::{Digest, Sha512};
@@ -38,7 +38,7 @@ impl<'a> Signable<'a> {
         }
     }
 
-    pub fn signing_string_v1(&self) -> Result<Vec<u8>> {
+    pub fn signing_string_v1(&self) -> Result<Vec<u8>, Error> {
         let mut hasher = Sha512::default();
 
         hasher.update(&self.verb);
@@ -54,7 +54,7 @@ impl<'a> Signable<'a> {
         Ok(hex::encode(hasher.finalize()).into_bytes())
     }
 
-    pub fn signing_string_v2(&self) -> Result<Vec<u8>> {
+    pub fn signing_string_v2(&self) -> Result<Vec<u8>, Error> {
         let encoded_query: String = Self::encode_query(&self.query)?;
         let body_digest = hex::encode(Sha512::digest(self.body));
 
@@ -70,14 +70,14 @@ impl<'a> Signable<'a> {
         .into_bytes())
     }
 
-    fn encode_query(qstr: &str) -> Result<String> {
+    fn encode_query(qstr: &str) -> Result<String, Error> {
         if qstr.is_empty() {
             return Ok("".to_string());
         }
         let mut temp_param_list = qstr
             .split('&')
             .map(Self::split_equal_and_decode)
-            .collect::<Result<Vec<[String; 2]>>>()?;
+            .collect::<Result<Vec<[String; 2]>, Error>>()?;
 
         temp_param_list.sort();
 
@@ -109,7 +109,7 @@ impl<'a> Signable<'a> {
         }
     }
 
-    fn split_equal_and_decode(value: &str) -> Result<[String; 2]> {
+    fn split_equal_and_decode(value: &str) -> Result<[String; 2], Error> {
         let (k, v) = value.split_once('=').unwrap_or((value, ""));
         Ok([
             Self::replace_plus_and_decode(k)?,
@@ -117,7 +117,7 @@ impl<'a> Signable<'a> {
         ])
     }
 
-    fn replace_plus_and_decode(value: &str) -> Result<String> {
+    fn replace_plus_and_decode(value: &str) -> Result<String, Error> {
         Ok(decode(&value.replace('+', " "))?.into_owned())
     }
 }

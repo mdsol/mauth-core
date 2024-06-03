@@ -12,7 +12,7 @@ keywords = ["security", "authentication"]
 categories = ["authentication"]
 
 [dependencies]
-anyhow = "1"
+thiserror = "1"
 base64 = "0.22"
 hex = "0.4"
 lazy-regex = "3"
@@ -20,6 +20,7 @@ rsa = "0.9.0"
 regex = { version = "1", default_features = false, features = ["std"] }
 sha2 = { version = "0.10", features = ["oid"] }
 urlencoding = "2"
+spki = "0.7"
 
 [dev-dependencies]
 serde = { version = "1", features = ["derive"] }

@@ -1,5 +1,4 @@
-use crate::signable::Signable;
-use anyhow::{bail, Result};
+use crate::{error::Error, signable::Signable};
 use base64::{engine::general_purpose, Engine as _};
 use rsa::pkcs1::DecodeRsaPrivateKey;
 use rsa::RsaPrivateKey;
@@ -13,7 +12,7 @@ pub struct Signer {
 }
 
 impl Signer {
-    pub fn new(app_uuid: impl Into<String>, private_key_data: String) -> Result<Self> {
+    pub fn new(app_uuid: impl Into<String>, private_key_data: String) -> Result<Self, Error> {
         let private_key = RsaPrivateKey::from_pkcs1_pem(&private_key_data)?;
         let signing_key = rsa::pkcs1v15::SigningKey::<Sha512>::new(private_key.to_owned());
 
@@ -32,17 +31,17 @@ impl Signer {
         query: impl Into<String>,
         body: &[u8],
         timestamp: impl Into<String>,
-    ) -> Result<String> {
+    ) -> Result<String, Error> {
         let signable = Signable::new(verb, path, query, body, timestamp, &self.app_uuid);
 
         match version {
             1 => self.sign_string_v1(&signable),
             2 => self.sign_string_v2(&signable),
-            _ => bail!("Version {version} is not supported."),
+            v => Err(Error::UnsupportedVersion(v)),
         }
     }
 
-    fn sign_string_v1(&self, signable: &Signable) -> Result<String> {
+    fn sign_string_v1(&self, signable: &Signable) -> Result<String, Error> {
         let signature = self.private_key.sign(
             rsa::Pkcs1v15Sign::new_unprefixed(),
             &signable.signing_string_v1()?,
@@ -50,7 +49,7 @@ impl Signer {
         Ok(general_purpose::STANDARD.encode(signature))
     }
 
-    fn sign_string_v2(&self, signable: &Signable) -> Result<String> {
+    fn sign_string_v2(&self, signable: &Signable) -> Result<String, Error> {
         use rsa::signature::{SignatureEncoding, Signer};
 
         let sign = self.signing_key.sign(&signable.signing_string_v2()?);
