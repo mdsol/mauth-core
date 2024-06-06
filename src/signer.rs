@@ -4,7 +4,7 @@ use rsa::pkcs1::DecodeRsaPrivateKey;
 use rsa::RsaPrivateKey;
 use sha2::Sha512;
 
-/// Used to sign outgoing reqeusts. Struct can be initialized once and used to sign many requests.
+/// Used to sign outgoing requests. Struct can be initialized once and used to sign many requests.
 #[derive(Debug, Clone)]
 pub struct Signer {
     app_uuid: String,

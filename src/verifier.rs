@@ -5,7 +5,7 @@ use rsa::pkcs8::DecodePublicKey;
 use rsa::RsaPublicKey;
 use sha2::Sha512;
 
-/// Used to verify incoming reqeusts. Struct can be initialized once and used to verify many requests.
+/// Used to verify incoming requests. Struct can be initialized once and used to verify many requests.
 #[derive(Debug, Clone)]
 pub struct Verifier {
     app_uuid: String,
@@ -40,7 +40,7 @@ impl Verifier {
     /// This function will verify that a provided signature is valid given the uuid and public key the
     /// struct was constructed with, the request properties passed into the function, and the signature
     /// passed in. It will return Ok(()) if the signature validates successfully, and Err if it does
-    /// not. It is the responsibiliy of the consuming crate and application to use these cases to
+    /// not. It is the responsibility of the consuming crate and application to use these cases to
     /// determine whether to process a request further, or return error information.
     ///
     /// ```
