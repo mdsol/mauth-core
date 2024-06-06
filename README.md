@@ -8,7 +8,7 @@ Add the following to your `Cargo.toml`:
 
 ```toml
 [dependencies]
-mauth-core = "0.4"
+mauth-core = "0.5"
 ```
 
 Here is an example of generating and verifying a signature:
