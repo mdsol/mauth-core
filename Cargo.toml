@@ -1,6 +1,6 @@
 [package]
 name = "mauth-core"
-version = "0.4.1"
+version = "0.5.0"
 edition = "2021"
 authors = ["Medidata Solutions <support@mdsol.com>"]
 description = "Generate and verify Medidata MAuth protocol signatures"
@@ -8,6 +8,7 @@ readme = "README.md"
 license = "MIT"
 homepage = "https://github.com/mdsol/mauth-core"
 repository = "https://github.com/mdsol/mauth-core"
+documentation = "https://docs.rs/mauth-core/"
 keywords = ["security", "authentication"]
 categories = ["authentication"]
 
