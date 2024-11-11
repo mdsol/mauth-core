@@ -13,7 +13,7 @@ keywords = ["security", "authentication"]
 categories = ["authentication"]
 
 [dependencies]
-thiserror = "1"
+thiserror = "2"
 base64 = "0.22"
 hex = "0.4"
 lazy-regex = "3"
