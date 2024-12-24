@@ -1,3 +1,4 @@
+use crate::pem_format;
 use crate::{error::Error, signable::Signable};
 use base64::{engine::general_purpose, Engine as _};
 use rsa::pkcs1::DecodeRsaPrivateKey;
@@ -27,7 +28,9 @@ impl Signer {
     /// assert!(signer.is_ok());
     /// ```
     pub fn new(app_uuid: impl Into<String>, private_key_data: String) -> Result<Self, Error> {
-        let private_key = RsaPrivateKey::from_pkcs1_pem(&private_key_data)?;
+        let private_key = RsaPrivateKey::from_pkcs1_pem(&pem_format::normalize_rsa_private_key(
+            private_key_data,
+        ))?;
         let signing_key = rsa::pkcs1v15::SigningKey::<Sha512>::new(private_key.to_owned());
 
         Ok(Self {
