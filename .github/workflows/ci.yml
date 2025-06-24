@@ -36,13 +36,21 @@ jobs:
         run: cargo clippy --all-targets --all-features
 
   test:
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.target }}
     timeout-minutes: 10
 
     concurrency:
       # Cancel intermediate builds
-      group: ${{ github.workflow }}-${{ github.ref }}
+      group: ${{ github.workflow }}-${{ github.ref }}-${{ matrix.target }}
       cancel-in-progress: true
+
+    strategy:
+      matrix:
+        target:
+          - ubuntu-latest
+          - ubuntu-24.04-arm
+          - macos-latest
+          - windows-latest
 
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # ratchet:actions/checkout@v4
