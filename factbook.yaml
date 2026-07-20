@@ -4,6 +4,7 @@ spec:
   type: library
   lifecycle: production
   owner: ae@mdsol.com
+  experience: enablement
 metadata:
   json_schema: https://github.com/mdsol/platform-standards/tree/main/schemas/v1alpha1.schema.json
   name: mauth-core
@@ -15,3 +16,5 @@ metadata:
   people:
     - role: technical owner
       email: ykitamura@mdsol.com
+  annotations:
+    product: N/A
