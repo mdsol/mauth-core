@@ -63,9 +63,9 @@ impl<'a> Signable<'a> {
             self.verb,
             Self::normalize_url(&self.path),
             body_digest,
-            &self.app_uuid,
-            &self.timestamp,
-            &encoded_query
+            self.app_uuid,
+            self.timestamp,
+            encoded_query
         )
         .into_bytes())
     }
@@ -88,7 +88,7 @@ impl<'a> Signable<'a> {
             .join("&"))
     }
 
-    fn normalize_url(url: &str) -> Cow<str> {
+    fn normalize_url(url: &str) -> Cow<'_, str> {
         if url.contains("//") || url.contains('%') || url.contains("/.") {
             let url = SQUEEZE_REGEX.replace_all(url, "/");
             let url = PERCENT_CASE_REGEX.replace_all(&url, |c: &Captures| c[0].to_uppercase());
