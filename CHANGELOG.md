@@ -1,3 +1,7 @@
+# 0.6.1
+- Accept RSA public keys encoded as either PKCS#1 (`BEGIN RSA PUBLIC KEY`) or
+  SubjectPublicKeyInfo (`BEGIN PUBLIC KEY`) PEM.
+
 # 0.6.0
 - Normalize provided private key string to the correct PEM format.
 - Update thiserror to version 2.

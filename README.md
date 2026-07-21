@@ -8,8 +8,12 @@ Add the following to your `Cargo.toml`:
 
 ```toml
 [dependencies]
-mauth-core = "0.5"
+mauth-core = "0.6"
 ```
+
+`Signer::new` accepts PKCS#1 RSA private key PEM. `Verifier::new` accepts RSA
+public key PEM encoded as either SubjectPublicKeyInfo (`BEGIN PUBLIC KEY`) or
+PKCS#1 (`BEGIN RSA PUBLIC KEY`).
 
 Here is an example of generating and verifying a signature:
 
