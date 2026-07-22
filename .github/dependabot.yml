@@ -12,6 +12,11 @@ updates:
       interval: weekly
     cooldown:
       default-days: 7
+    # Keep these pinned until a stable rsa 0.10+ release is adopted.
+    ignore:
+      - dependency-name: "rsa"
+      - dependency-name: "sha2"
+      - dependency-name: "spki"
     groups:
       cargo:
         patterns:
