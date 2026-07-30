@@ -17,8 +17,10 @@ thiserror = "2"
 base64 = "0.22"
 hex = "0.4"
 lazy-regex = "3"
+# Keep these crypto dependencies on stable, compatible versions.
+# rsa 0.9 uses digest 0.10; moving to sha2 0.11 requires rsa 0.10, which is still RC.
 rsa = "0.9.0"
-regex = { version = "1", default_features = false, features = ["std"] }
+regex = { version = "1", default-features = false, features = ["std"] }
 sha2 = { version = "0.10", features = ["oid"] }
 urlencoding = "2"
 spki = "0.7"
