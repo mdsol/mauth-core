@@ -28,7 +28,7 @@ spki = "0.7"
 [dev-dependencies]
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
-criterion = "0.6"
+criterion = "0.8"
 rstest = "0.26"
 
 [[bench]]
