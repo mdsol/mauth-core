@@ -14,7 +14,7 @@ categories = ["authentication"]
 
 [dependencies]
 thiserror = "2"
-base64 = "0.22"
+base64 = "0.23"
 hex = "0.4"
 lazy-regex = "3"
 # Keep these crypto dependencies on stable, compatible versions.
